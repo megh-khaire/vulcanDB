@@ -51,17 +51,8 @@ def dataframe_to_text(df):
         text_data += f"Row {index + 1}: {row_text}\n"
     return text_data
 
-# Dummy Lang Chain call function (Replace with actual implementation)
-
-
-async def lang_chain_call(prompt):
-    # Here you would implement the actual call to Lang Chain
-    # This is just a placeholder
-    return "Response from Lang Chain based on: " + prompt
 
 # Get info from dataframe
-
-
 def dataframe_info(df):
     buffer = StringIO()
     df.info(buf=buffer)
