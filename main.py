@@ -9,7 +9,7 @@ from openai.error import OpenAIError  # Make sure this is correctly imported
 app = FastAPI()
 
 # It's safer to use an environment variable
-openai.api_key = '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'
+openai.api_key = 'INSERT API KEY HERE'
 
 
 async def openai_call(prompt):
