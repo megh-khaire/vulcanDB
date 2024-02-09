@@ -55,8 +55,10 @@ def generate_sequential_chain_response(prompts, input_variables):
     output_variables = []
     chains = []
     for prompt in prompts:
-        formatted_prompt = generate_prompt(prompt["text"], prompt["input_variables"])
-        chains.append(get_llm_chain(formatted_prompt, prompt["output_variable"]))
+        formatted_prompt = generate_prompt(
+            prompt["text"], prompt["input_variables"])
+        chains.append(get_llm_chain(
+            formatted_prompt, prompt["output_variable"]))
         output_variables.append(prompt["output_variable"])
 
     sequential_chain = SequentialChain(
