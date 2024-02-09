@@ -2,8 +2,17 @@ from io import StringIO
 import pandas as pd
 
 
+def clean_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
+    # Removing unnamed columns
+    dataframe = dataframe.loc[:, ~dataframe.columns.str.contains('^Unnamed')]
+    # Remove rows with NaN values
+    dataframe.dropna(inplace=True)
+    return dataframe
+
+
 def read_csv(csv_file_path: str):
-    return pd.read_csv(csv_file_path)
+    dataframe = pd.read_csv(csv_file_path)
+    return clean_dataframe(dataframe)
 
 
 def get_dataframe_description(dataframe: pd.DataFrame):
