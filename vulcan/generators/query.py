@@ -3,6 +3,12 @@ import sqlvalidator
 
 from vulcan.configs.prompts import query_generation_prompt
 from vulcan.utils.lang_chain import generate_sequential_chain_response
+from sqleyes.main import main as sqleyes_main
+
+
+def find_sql_anti_patterns(query: str):
+    anti_patterns = sqleyes_main(query)
+    return anti_patterns
 
 
 def validate_sql_query(query: str):
