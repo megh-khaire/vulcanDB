@@ -1,7 +1,17 @@
 import vulcan.generators.metadata as vgm
+import sqlvalidator
 
 from vulcan.configs.prompts import query_generation_prompt
 from vulcan.utils.lang_chain import generate_sequential_chain_response
+
+
+def validate_sql_query(query: str):
+    # Parsing the sql query
+    parsed_query = sqlvalidator.parse(query)
+    # Checking the validity of the parsed query
+    is_valid = parsed_query.is_valid()
+    # Returning the validity and errors if any
+    return is_valid, parsed_query.errors
 
 
 def generate_sql_queries(csv_file_path: str):
