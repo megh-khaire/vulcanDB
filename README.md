@@ -45,3 +45,42 @@ Before launching the application, follow these steps to configure your environme
 1. Duplicate the provided `example.env` file.
 2. Rename the duplicated file to `.env`.
 3. Open the `.env` file and insert the secrets and configurations required for the application to function properly.
+
+## Usage
+
+Here's how you can use Vulcan:
+
+From the root directory execute the following command:
+
+```bash
+python -m vulcan -f <input_file_name>
+```
+
+Replace `<input_file_name>` with the name of the file for which you want to generate SQL queries.
+
+### Options
+
+`-f`: Specifies the file name for which SQL queries will be generated. This is a required argument.
+To know more about other options, you can execute the following command:
+
+To know more about other options you can execute the following command:
+
+```bash
+python -m vulcan -h
+```
+
+This will display the help message and exit, showing optional arguments:
+
+```bash
+optional arguments:
+  -h, --help            show this help message and exit
+  -f FILE_NAME          File name
+```
+
+## Tests
+
+To execute tests you can use the following command:
+
+```bash
+pytest -m vulcan
+```
