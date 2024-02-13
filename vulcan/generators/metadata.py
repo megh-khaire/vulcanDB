@@ -5,8 +5,8 @@ import pandas as pd
 def clean_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
     # Removing unnamed columns
     dataframe = dataframe.loc[:, ~dataframe.columns.str.contains('^Unnamed')]
-    # Remove rows with NaN values
-    dataframe.dropna(inplace=True)
+    # Remove rows with NaN values and assign the result back to dataframe
+    dataframe = dataframe.dropna()
     return dataframe
 
 

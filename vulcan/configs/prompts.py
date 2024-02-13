@@ -1,33 +1,87 @@
 query_generation_prompt = [
     {
-        "text": """Given some raw data and its structure, define a relational schema that includes tables, columns, and data types.
+        "text": """
+        Task: Create a relational database schema from provided raw data.
 
-Raw data:
-{raw_data}
+        Instructions:
+        1. Analyze the raw data and its structure provided below.
+        2. Define a relational schema that organizes this data into tables.
+        3. For each table, specify the columns, their data types, and relationships between tables if applicable.
 
-Structure:
-{structure}
-""",
+        Input Variables:
+        - raw_data: A description or example of the raw data to be organized.
+        - structure: Information about the structure or format of the raw data.
+
+        Desired Output:
+        - schema: A detailed relational schema including table names, column names with data types, and table relationships.
+
+        ====================
+        raw_data:
+
+        {raw_data}
+        ====================
+        structure:
+
+        {structure}
+        ====================
+        Output Schema:
+        """,
         "input_variables": ["raw_data", "structure"],
         "output_variable": "schema",
     },
     {
-        "text": """Given schema for a relational database, identify primary keys, foreign keys, and any other constraints for the defined schema. Be as strict as possible!
+        "text": """
+        Task: Identify keys and constraints in a relational database schema.
 
-Schema:
-{schema}
-""",
+        Instructions:
+        1. Examine the provided schema for a relational database.
+        2. Identify all primary keys (PK) and foreign keys (FK) within the schema.
+        3. Determine any additional constraints (e.g., unique, not null) that should be applied to ensure data integrity.
+        4. Be as detailed and strict as possible in specifying these constraints.
+
+        Input Variable:
+        - schema: The schema of the relational database, including table and column definitions.
+
+        Desired Output:
+        - constraints: A comprehensive list of all keys (PK and FK) and constraints for the schema, specifying which table and column they apply to.
+
+        ====================
+        schema:
+
+        {schema}
+        ====================
+        Output Constraints:
+        """,
         "input_variables": ["schema"],
         "output_variable": "constraints",
     },
     {
-        "text": """Generate only SQL CREATE TABLE queries based on the defined schema including keys and constraints.
+        "text": """
+        Task: Generate SQL CREATE TABLE queries from a schema with constraints.
 
-Schema:
-{schema}
+        Instructions:
+        1. Using the provided schema and constraints, generate SQL CREATE TABLE statements.
+        2. Ensure each statement includes the necessary keys (primary and foreign) and any other specified constraints.
+        3. The queries should be ready to execute in a SQL database, properly formatting SQL syntax.
+        4. Return only the generated queries, no additional text is required.
 
-Constraints:
-{constraints}
+        Input Variables:
+        - schema: The schema definitions for the tables including column names and types.
+        - constraints: The constraints identified for the schema, including primary keys, foreign keys, and others.
+
+        Desired Output:
+        - queries: A set of SQL CREATE TABLE statements that reflect the schema and incorporate all constraints.
+
+        ====================
+        schema:
+
+        {schema}
+        ====================
+        constraints:
+
+        {constraints}
+        ====================
+        Output Queries:
         """,
         "input_variables": ["schema", "constraints"],
         "output_variable": "queries",
