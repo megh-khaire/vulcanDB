@@ -1,55 +1,91 @@
-import os
-from typing import List, Optional, Tuple
+from pandas import DataFrame
+from typing import Optional, Tuple
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import MetaData, create_engine, text
+from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 
 
-def initialize_database(db_uri: str) -> create_engine:
+def initialize_default_database(db_file: str = "default.db") -> Engine:
+    """
+    Initializes a SQLite database engine with a default or specified database file.
+
+    :param db_file: Name of the SQLite database file. Defaults to 'default.db'.
+    :return: SQLAlchemy Engine instance for the SQLite database.
+    """
+    db_uri = f"sqlite:///{db_file}"
+    engine = create_engine(db_uri, echo=False, future=True)
+    return engine
+
+
+def initialize_database(
+    db_uri: str, connect_args: Optional[dict] = None, **engine_kwargs
+) -> Engine:
     """
     Initializes a database engine.
 
-    :param db_uri: Database URI for connection, e.g., 'sqlite:///example.db' for SQLite.
-    :return: SQLAlchemy Engine instance.
+    Parameters:
+    - db_uri: Database URI for connection.
+    - connect_args: Optional dictionary of connection arguments to be passed to the database.
+    - engine_kwargs: Additional keyword arguments to be passed to create_engine.
+
+    Returns:
+    - SQLAlchemy Engine instance.
     """
-    engine = create_engine(db_uri, echo=True, future=True)
+    if connect_args is None:
+        connect_args = {}
+    engine = create_engine(db_uri, connect_args=connect_args, **engine_kwargs)
     return engine
 
 
 def execute_queries(
-    engine: create_engine, queries: List[str]
+    engine: Engine, table_order: list[str], tables: dict
 ) -> Tuple[bool, Optional[str]]:
     """
     Executes a list of SQL queries using the given engine.
 
-    :param engine: SQLAlchemy Engine instance.
-    :param queries: List of SQL query strings to be executed.
-    :return: Tuple of success flag and error message (if any).
+    Parameters:
+    - engine: SQLAlchemy Engine instance.
+    - queries: List of SQL query strings to be executed.
+
+    Returns:
+    - Tuple of success flag and error message (if any).
     """
     with engine.connect() as conn:
+        transaction = conn.begin()
         try:
-            for query in queries:
+            for table_name in table_order:
+                query = tables[table_name]["query"]
                 conn.execute(text(query))
-            conn.commit()
+            transaction.commit()
             return True, None
         except SQLAlchemyError as e:
-            return False, str(e)
+            transaction.rollback()
+            return False, e
 
 
-def delete_database(db_file: str):
+def reset_database(engine: Engine):
     """
-    Deletes the database file if it exists.
-
-    :param db_file: The file path of the database to delete.
+    Resets the database by dropping all tables. Use with caution.
     """
-    if os.path.exists(db_file):
-        os.remove(db_file)
-        print(f"Deleted existing database file: {db_file}")
+    meta = MetaData()
+    meta.reflect(bind=engine)
+    meta.drop_all(bind=engine)
+    print("All tables dropped!")
+
+
+def populate_database(
+    db_uri: str,
+    table_order: list[str],
+    tables: dict,
+    dataframe: DataFrame,
+    connect_args: Optional[dict] = None,
+    **engine_kwargs,
+):
+    if db_uri:
+        engine = initialize_database(db_uri, connect_args, **engine_kwargs)
     else:
-        print("Database file does not exist, no need to delete.")
-
-
-def setup_and_populate_db(db_file_path: str, sql_queries: list[str]):
-    delete_database(db_file_path)
-    engine = initialize_database(f"sqlite:///{db_file_path}")
-    return execute_queries(engine, sql_queries)
+        engine = initialize_default_database()
+    execute_queries(engine, table_order, tables)
+    # Push data in db
+    engine.dispose()

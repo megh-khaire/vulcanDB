@@ -31,10 +31,3 @@ def get_table_creation_order(graph):
         return order
     else:
         raise Exception("Graph has at least one cycle, topological sort not possible.")
-
-
-def get_query_execution_order(table_order, table_query_map):
-    queries = []
-    for table in table_order:
-        queries.append(table_query_map[table])
-    return queries

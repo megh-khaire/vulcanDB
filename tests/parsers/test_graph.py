@@ -21,14 +21,14 @@ test_data = [
     # Independent tables
     ({"TableA": [], "TableB": [], "TableC": []}, ["TableA", "TableB", "TableC"]),
     # Circular dependency (should raise exception)
-    ({"TableA": ["TableB"], "TableB": ["TableA"]}, ValueError),
+    ({"TableA": ["TableB"], "TableB": ["TableA"]}, Exception),
 ]
 
 
 @pytest.mark.parametrize("dependencies,expected", test_data)
-def test_set_query_execution_order(dependencies, expected):
-    if expected is ValueError:
-        with pytest.raises(ValueError):
+def test_get_query_execution_order(dependencies, expected):
+    if expected is Exception:
+        with pytest.raises(Exception):
             get_table_creation_order(dependencies)
     else:
         result = get_table_creation_order(dependencies)

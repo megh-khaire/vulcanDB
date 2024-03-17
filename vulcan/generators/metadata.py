@@ -1,38 +1,5 @@
 from io import StringIO
-from typing import Optional
 import pandas as pd
-
-
-def clean_dataframe(dataframe: pd.DataFrame) -> pd.DataFrame:
-    # Remove unnamed columns
-    dataframe = dataframe.loc[:, ~dataframe.columns.str.contains("^Unnamed")]
-    # Remove rows with NaN values and assign the result back to dataframe
-    dataframe = dataframe.dropna()
-    return dataframe
-
-
-def read_csv(csv_file_path: str, fillna: Optional[dict] = None) -> pd.DataFrame:
-    """Read a CSV file into a DataFrame, clean it, and optionally fill NaN values.
-
-    Parameters:
-    - csv_file_path: Path to the CSV file.
-    - fillna: Dictionary specifying values to fill NaNs for specific columns, e.g., {'column_name': 0}.
-
-    Returns:
-    - A cleaned DataFrame.
-    """
-    try:
-        dataframe = pd.read_csv(csv_file_path)
-        dataframe = clean_dataframe(dataframe)
-        if fillna is not None:
-            dataframe.fillna(value=fillna, inplace=True)
-        return dataframe
-    except FileNotFoundError:
-        print(f"Error: File {csv_file_path} not found.")
-    except pd.errors.EmptyDataError:
-        print("Error: No data in CSV file.")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
 
 
 def get_dataframe_description(dataframe: pd.DataFrame):
