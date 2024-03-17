@@ -82,5 +82,5 @@ optional arguments:
 To execute tests you can use the following command:
 
 ```bash
-pytest -m vulcan
+pytest
 ```

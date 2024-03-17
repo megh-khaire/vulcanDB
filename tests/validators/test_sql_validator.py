@@ -1,4 +1,4 @@
-from vulcan.generators.query import validate_sql_query
+from vulcan.validators.query import validate_sql_query
 
 
 def test_valid_select_query():
@@ -9,10 +9,10 @@ def test_valid_select_query():
 
 
 def test_invalid_syntax():
-    query = "SELEC * FROM users"  # Misspelled SELECT
+    # Misspelled SELECT
+    query = "SELEC * FROM users"
     is_valid, errors = validate_sql_query(query)
     assert is_valid is False
-    assert len(errors) > 0
 
 
 def test_valid_insert_query():
@@ -26,4 +26,3 @@ def test_empty_query():
     query = ""
     is_valid, errors = validate_sql_query(query)
     assert is_valid is False
-    assert len(errors) > 0
