@@ -46,7 +46,7 @@ FOREIGN KEY (addressee_id) REFERENCES users(user_id)
 
 @pytest.fixture(scope="function")
 def db_engine():
-    db_uri = "sqlite:///test.db"
+    db_uri = "sqlite:///output/test.db"
     engine = initialize_database(db_uri)
     yield engine
     reset_database(engine)

@@ -1,6 +1,6 @@
-from pandas import DataFrame
 from typing import Optional, Tuple
 
+from pandas import DataFrame
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
@@ -13,7 +13,7 @@ def initialize_default_database(db_file: str = "default.db") -> Engine:
     :param db_file: Name of the SQLite database file. Defaults to 'default.db'.
     :return: SQLAlchemy Engine instance for the SQLite database.
     """
-    db_uri = f"sqlite:///{db_file}"
+    db_uri = f"sqlite:///output/{db_file}"
     engine = create_engine(db_uri, echo=False, future=True)
     return engine
 
