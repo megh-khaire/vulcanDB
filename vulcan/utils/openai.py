@@ -1,4 +1,5 @@
 import os
+import re
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -96,6 +97,17 @@ Constrained Schema:
     return data
 
 
+def format_sql_queries(queries: str) -> list:
+    # Remove the initial ```sql and the final ```
+    cleaned_queries = re.sub(
+        r"^\s*```sql\s*|\s*```\s*$", "", queries, flags=re.MULTILINE
+    )
+    # Split the queries by the start of each "CREATE TABLE", using lookahead to keep "CREATE TABLE" with each split
+    split_queries = re.split(r"(?=\s*CREATE TABLE)", cleaned_queries.strip())
+    # Clean up any leading/trailing whitespace and return the list
+    return [query.strip() for query in split_queries if query.strip()]
+
+
 def generate_sql_queries(data: dict) -> dict:
     system_prompt = """
 ### Task ###
@@ -126,6 +138,7 @@ SQL Queries:
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
-    data["queries"] = openai_chat_api(messages, model="gpt-4-turbo", temperature=0.7)
+    queries = openai_chat_api(messages, model="gpt-4-turbo", temperature=0.7)
+    data["queries"] = format_sql_queries(queries)
     print(">> GENERATED QUERIES ", data["queries"])
     return data

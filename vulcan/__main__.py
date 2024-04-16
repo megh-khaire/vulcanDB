@@ -13,8 +13,7 @@ load_dotenv()
 def run_pipeline(file_name, db_uri, db_type):
     dataframe = read_csv(file_name)
     response = generate_sql_queries(dataframe, db_type)
-    queries = response["queries"].split("\n\n")
-    dependency_graph, tables = create_query_dependency_graph(queries)
+    dependency_graph, tables = create_query_dependency_graph(response["queries"])
     table_order = get_table_creation_order(dependency_graph)
     populate_database(db_uri, table_order, tables, dataframe)
 
