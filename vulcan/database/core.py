@@ -10,8 +10,11 @@ def initialize_default_database(db_file: str = "default.db") -> Engine:
     """
     Initializes a SQLite database engine with a default or specified database file.
 
-    :param db_file: Name of the SQLite database file. Defaults to 'default.db'.
-    :return: SQLAlchemy Engine instance for the SQLite database.
+    Parameters:
+    - db_file: Name of the SQLite database file. Defaults to 'default.db'.
+
+    Returns:
+    - SQLAlchemy Engine instance for the SQLite database.
     """
     db_uri = f"sqlite:///output/{db_file}"
     engine = create_engine(db_uri, echo=False, future=True)

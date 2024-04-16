@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import text
 
-from vulcan.db.core import execute_queries, initialize_database, reset_database
+from vulcan.database.core import execute_queries, initialize_database, reset_database
 
 table_order = ["users", "posts", "friendships"]
 tables = {

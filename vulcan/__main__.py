@@ -2,11 +2,10 @@ import argparse
 
 from dotenv import load_dotenv
 
-from vulcan.db.core import populate_database
-from vulcan.db.load import read_csv
+from vulcan.database.core import populate_database
 from vulcan.generators.query import generate_sql_queries
-from vulcan.parsers.graph import get_table_creation_order
-from vulcan.parsers.query import create_query_dependency_graph
+from vulcan.parsers.graph import create_query_dependency_graph, get_table_creation_order
+from vulcan.readers.csv import read_csv
 
 load_dotenv()
 
@@ -14,7 +13,7 @@ load_dotenv()
 def run_pipeline(file_name, db_uri, db_type):
     dataframe = read_csv(file_name)
     response = generate_sql_queries(dataframe, db_type)
-    queries = response.split("\n\n")
+    queries = response["queries"].split("\n\n")
     dependency_graph, tables = create_query_dependency_graph(queries)
     table_order = get_table_creation_order(dependency_graph)
     populate_database(db_uri, table_order, tables, dataframe)

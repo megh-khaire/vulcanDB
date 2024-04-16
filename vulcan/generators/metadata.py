@@ -2,28 +2,43 @@ from io import StringIO
 import pandas as pd
 
 
-def get_dataframe_description(dataframe: pd.DataFrame):
-    # Generate the description as before
+def get_dataframe_description(dataframe: pd.DataFrame) -> str:
+    """
+    Generates a formatted string describing the DataFrame's columns, non-null values, and data types.
+
+    Parameters:
+    - dataframe: The DataFrame to describe.
+
+    Returns:
+    - A formatted string with the description of DataFrame.
+    """
+    # Capture the DataFrame info in a string buffer
     buffer = StringIO()
     dataframe.info(buf=buffer)
     info = buffer.getvalue()
     buffer.close()
 
-    # Extract only the column information part
+    # Extract and format the column information
     lines = info.split("\n")
-    column_info_lines = [
-        line for line in lines if line.startswith(" ") or line.startswith("#")
-    ]
-
-    # Reformat to match the requested output
-    output = "Column          Non-Null     Count       Dtype\n" + "\n".join(
-        column_info_lines[1:]
-    )
-    return output
+    column_info_lines = [line for line in lines if line.strip()]
+    # Prepare the formatted output
+    formatted_output = "Column             Non-Null             Dtype\n"
+    formatted_output += "-" * 40 + "\n"
+    for line in column_info_lines[4:]:
+        try:
+            parts = line.strip().split()
+            column_name = parts[1]
+            non_null_count = parts[3]
+            dtype = parts[4]
+            formatted_output += f"{column_name:20} {non_null_count:15} {dtype}\n"
+        except IndexError as _e:
+            continue
+    return formatted_output
 
 
 def get_dataframe_samples(dataframe: pd.DataFrame, sample_size: int = 10) -> str:
-    """Return a string representation of a sample of the DataFrame.
+    """
+    Returns a string representation of a sample from the DataFrame.
 
     Parameters:
     - dataframe: The DataFrame to sample from.
@@ -33,6 +48,9 @@ def get_dataframe_samples(dataframe: pd.DataFrame, sample_size: int = 10) -> str
     - A string representation of the DataFrame sample.
     """
     if not dataframe.empty:
-        return dataframe.sample(n=min(sample_size, len(dataframe))).to_string()
+        # Ensure the sample size does not exceed the number of available rows
+        sample = dataframe.sample(n=min(sample_size, len(dataframe)))
+        # Return a string representation of the sample without the index
+        return sample.to_string(index=False)
     else:
         return "DataFrame is empty."

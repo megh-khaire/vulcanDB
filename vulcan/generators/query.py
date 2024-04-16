@@ -1,13 +1,13 @@
 import vulcan.generators.metadata as vgm
-from vulcan.configs.prompts import query_generation_prompt
-from vulcan.utils.lang_chain import generate_sequential_chain_response
+import vulcan.utils.openai as vuo
 
 
 def generate_sql_queries(dataframe: str, db_type: str):
     info = vgm.get_dataframe_description(dataframe)
     samples = vgm.get_dataframe_samples(dataframe)
-    response = generate_sequential_chain_response(
-        query_generation_prompt,
+    data = vuo.generate_schema(
         {"database": db_type, "raw_data": samples, "structure": info},
     )
+    data = vuo.generate_constraints(data)
+    response = vuo.generate_sql_queries(data)
     return response

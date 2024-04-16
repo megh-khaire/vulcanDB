@@ -43,17 +43,3 @@ def parse_sql_query(query: str):
         "columns": extract_column_from_parsed_query(parsed_query),
         "foreign_keys": extract_constraints_from_parsed_query(parsed_query),
     }
-
-
-def create_query_dependency_graph(queries: list):
-    tables = {}
-    dependency_graph = {}
-    for query in queries:
-        table_info = parse_sql_query(query)
-        table_name = table_info["name"]
-        tables[table_name] = table_info
-        if table_name in dependency_graph:
-            dependency_graph[table_name] + table_info["foreign_keys"]
-        else:
-            dependency_graph[table_name] = table_info["foreign_keys"]
-    return dependency_graph, tables
