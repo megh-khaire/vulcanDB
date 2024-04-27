@@ -51,7 +51,7 @@ Output Schema:
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
-    data["schema"] = openai_chat_api(messages, model="gpt-4-turbo", temperature=0.7)
+    data["schema"] = openai_chat_api(messages, model="gpt-4-turbo", temperature=0)
     print(">> GENERATED SCHEMA ", data["schema"])
     return data
 
@@ -91,7 +91,7 @@ Constrained Schema:
         {"role": "user", "content": user_prompt},
     ]
     data["constrained_schema"] = openai_chat_api(
-        messages, model="gpt-4-turbo", temperature=1
+        messages, model="gpt-4-turbo", temperature=0
     )
     print(">> GENERATED CONSTRAINTS ", data["constrained_schema"])
     return data
@@ -109,27 +109,48 @@ def format_sql_queries(queries: str) -> list:
 
 
 def generate_sql_queries(data: dict) -> dict:
-    system_prompt = """
+    system_prompt = f"""
 ### Task ###
-Generate syntactically correct CREATE TABLE queries for the schema provided by the user.
+Generate syntactically correct CREATE TABLE queries for the constrained schema provided by the user, specifically for {data["database"]}.
 
 ### Instructions ###
-1. Using the provided schema and constraints, generate CREATE TABLE statements for {database} database.
-2. Ensure each table includes the necessary keys (primary and foreign) and specified constraints.
-3. The queries should be syntactically correct to run on {database} database.
+1. Using the provided constrained schema, generate CREATE TABLE statements for the {data["database"]} database.
+2. Ensure each table includes all specified columns, data types, and constraints.
+3. The queries should be syntactically correct to run on a {data["database"]} database.
 4. Return only the generated queries.
 5. Refrain from returning any additional text apart from the queries.
 6. Separate each query with double new lines.
+7. Ensure all constraints are included in the generated queries.
 
+### Example ###
+Suppose the schema provided is:
+Employees
+  - Columns:
+    - id INT PRIMARY KEY
+    - name VARCHAR(100) NOT NULL
+    - department_id INT REFERENCES Departments(id)
+  - Constraints:
+    - id is the primary key.
+    - name must not be null.
+    - age must be greater than 18 (Check Constraint).
+
+Based on the above schema the output should be:
+CREATE TABLE Employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    age INT CHECK (age > 18),
+    salary DECIMAL(10, 2)
+);
+"""
+
+    user_prompt = f"""
 ### Input Data ###
-schema: A relational schema consisting of all applicable constraints
+A relational constrained schema
+{data["constrained_schema"]}
+
 
 ## Desired Output ###
-queries: CREATE TABLE statements for creating the given schema by incorporating all its constraints.
-"""
-    user_prompt = f"""
-### Schema ###
-{data["schema"]}
+CREATE TABLE statements for creating the given constrained schema.
 
 
 SQL Queries:
@@ -138,7 +159,7 @@ SQL Queries:
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
-    queries = openai_chat_api(messages, model="gpt-4-turbo", temperature=0.7)
+    queries = openai_chat_api(messages, model="gpt-4-turbo", temperature=0)
     data["queries"] = format_sql_queries(queries)
     print(">> GENERATED QUERIES ", data["queries"])
     return data
