@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from vulcan.database.core import populate_database
 from vulcan.generators.query import generate_sql_queries
 from vulcan.parsers.graph import create_query_dependency_graph, get_table_creation_order
-from vulcan.readers.csv import read_csv
 
 load_dotenv()
 

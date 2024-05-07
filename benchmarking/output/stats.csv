@@ -1,0 +1,5 @@
+check,foreign_key,primary_key,default,not_null,unique,dataset,execution_time,total_num_constraints,num_tables,no_of_missing_columns,masked
+15,0,1,0,14,0,DelayedFlights.csv,90.74796795845032,30,1,30,False
+0,16,0,1,0,15,DelayedFlights.csv,93.09787392616272,32,1,30,False
+0,14,0,0,21,1,DelayedFlights.csv (masked),110.42978310585022,36,1,30,False
+0,0,0,21,15,1,DelayedFlights.csv (masked),90.80409216880798,37,1,30,False

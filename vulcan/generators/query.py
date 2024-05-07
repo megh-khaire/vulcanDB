@@ -9,5 +9,4 @@ def generate_sql_queries(dataframe: str, db_type: str):
         {"database": db_type, "raw_data": samples, "structure": info},
     )
     data = vuo.generate_constraints(data)
-    response = vuo.generate_sql_queries(data)
-    return response
+    return vuo.generate_sql_queries(data)
