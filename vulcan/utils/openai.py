@@ -26,7 +26,7 @@ Create a relational database schema from the raw data and structure provided by 
 3. For each table, specify the columns, their data types, and relationships between tables.
 4. Ignore unrelated or redundant columns while generating the schema.
 5. Create multiple tables only when it is required.
-6. Refrain from splitting schema into unecessary tables.
+6. Use the auto increment clause for primary key if required.
 7. Refrain from directly generating SQL Queries.
 
 ### Input Data ###
@@ -52,7 +52,6 @@ Output Schema:
         {"role": "user", "content": user_prompt},
     ]
     data["schema"] = openai_chat_api(messages, model="gpt-4-turbo", temperature=0)
-    print(">> GENERATED SCHEMA ", data["schema"])
     return data
 
 
@@ -93,7 +92,6 @@ Constrained Schema:
     data["constrained_schema"] = openai_chat_api(
         messages, model="gpt-4-turbo", temperature=0
     )
-    print(">> GENERATED CONSTRAINTS ", data["constrained_schema"])
     return data
 
 
@@ -118,6 +116,7 @@ Generate syntactically correct CREATE TABLE queries for the constrained schema p
 2. Ensure each table includes all specified columns, data types, and constraints.
 3. The queries should be syntactically correct to run on a {data["database"]} database.
 4. Return only the generated queries.
+5. Refrain from using sub-queries in CHECK constraint.
 5. Refrain from returning any additional text apart from the queries.
 6. Separate each query with double new lines.
 7. Ensure all constraints are included in the generated queries.
@@ -153,7 +152,7 @@ A relational constrained schema
 CREATE TABLE statements for creating the given constrained schema.
 
 
-SQL Queries:
+SQL Queries for {data["database"]}:
 """
     messages = [
         {"role": "system", "content": system_prompt},

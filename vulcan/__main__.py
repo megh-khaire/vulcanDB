@@ -21,12 +21,8 @@ def main():
     )
 
     args = parser.parse_args()
-    file_name = args.file_name
-    db_uri = args.db_uri
-    db_type = args.db_type
-
-    dataframe = read_csv(file_name)
-    run_pipeline(dataframe, db_uri, db_type)
+    dataframe = read_csv(args.file_name)
+    run_pipeline(dataframe, args.db_uri, args.db_type)
 
 
 if __name__ == "__main__":

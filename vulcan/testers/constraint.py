@@ -22,8 +22,7 @@ def get_column_constraints(parsed_query, constraint_count):
 
 
 def get_table_constraints(parsed_query, constraint_count):
-    parsed_constraints = vpq.extract_table_constraints_from_parsed_query(
-        parsed_query)
+    parsed_constraints = vpq.extract_table_constraints_from_parsed_query(parsed_query)
     for constraint in parsed_constraints:
         # Identify foreign key and check constraints
         if isinstance(constraint, dict):

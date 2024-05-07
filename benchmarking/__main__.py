@@ -1,24 +1,17 @@
+import argparse
 import os
 import time
-import argparse
-import pandas as pd
 
+from benchmarking.utils import write_benchmarking_data
 from vulcan.app import run_pipeline
+from vulcan.readers.csv import read_csv
 from vulcan.testers.column import get_missing_columns
 from vulcan.testers.constraint import count_constraints
-from vulcan.app import run_pipeline
-
-
-def append_dict_as_row(data):
-    csv_output_file = 'benchmarking/output/stats.csv'
-    df = pd.DataFrame([data])
-    with open(csv_output_file, 'a') as f:
-        df.to_csv(f, header=f.tell() == 0, index=False)
 
 
 def run_benchmarking_pipeline(file_name, db_uri, db_type):
     start_time = time.time()
-    dataframe = pd.read_csv(file_name)
+    dataframe = read_csv(file_name)
     response = run_pipeline(dataframe, db_uri, db_type)
     execution_time = time.time() - start_time
 
@@ -29,20 +22,22 @@ def run_benchmarking_pipeline(file_name, db_uri, db_type):
             stats[key] = stats.get(key, 0) + query_constraints.get(key, 0)
 
     no_of_queries = len(response["queries"])
-    no_of_missing_columns = len(
-        get_missing_columns(response["queries"], dataframe))
+    no_of_missing_columns = len(get_missing_columns(response["queries"], dataframe))
     no_total_constraints = sum(stats.values())
 
-    stats.update({
-        "dataset": os.path.basename(file_name),
-        "execution_time": execution_time,
-        "total_num_constraints": no_total_constraints,
-        "num_tables": no_of_queries,
-        "no_of_missing_columns": no_of_missing_columns,
-        "masked": False
-    })
+    stats.update(
+        {
+            "dataset": os.path.basename(file_name),
+            "tool": "gpt-4-turbo",
+            "execution_time": execution_time,
+            "total_num_constraints": no_total_constraints,
+            "num_tables": no_of_queries,
+            "no_of_missing_columns": no_of_missing_columns,
+            "masked": False,
+        }
+    )
 
-    append_dict_as_row(stats)
+    write_benchmarking_data(stats)
     return stats
 
 
@@ -63,11 +58,7 @@ def main():
     )
 
     args = parser.parse_args()
-    file_name = args.file_name
-    db_uri = args.db_uri
-    db_type = args.db_type
-
-    run_benchmarking_pipeline(file_name, db_uri, db_type)
+    run_benchmarking_pipeline(args.file_name, args.db_uri, args.db_type)
 
 
 if __name__ == "__main__":

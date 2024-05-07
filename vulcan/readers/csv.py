@@ -42,15 +42,8 @@ def read_csv(csv_file_path: str, fillna: Optional[dict] = None) -> pd.DataFrame:
     Returns:
     - A cleaned DataFrame.
     """
-    try:
-        dataframe = pd.read_csv(csv_file_path)
-        dataframe = clean_dataframe(dataframe)
-        if fillna is not None:
-            dataframe.fillna(value=fillna, inplace=True)
-        return dataframe
-    except FileNotFoundError:
-        print(f"Error: File {csv_file_path} not found.")
-    except pd.errors.EmptyDataError:
-        print("Error: No data in CSV file.")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+    dataframe = pd.read_csv(csv_file_path)
+    dataframe = clean_dataframe(dataframe)
+    if fillna is not None:
+        dataframe.fillna(value=fillna, inplace=True)
+    return dataframe

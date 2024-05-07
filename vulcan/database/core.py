@@ -17,7 +17,7 @@ def initialize_default_database(db_file: str = "default.db") -> Engine:
     - SQLAlchemy Engine instance for the SQLite database.
     """
     db_uri = f"sqlite:///output/{db_file}"
-    engine = create_engine(db_uri, echo=False, future=True)
+    engine = create_engine(db_uri, echo=True, future=True)
     return engine
 
 
@@ -37,7 +37,9 @@ def initialize_database(
     """
     if connect_args is None:
         connect_args = {}
-    engine = create_engine(db_uri, connect_args=connect_args, **engine_kwargs)
+    engine = create_engine(
+        db_uri, echo=True, connect_args=connect_args, **engine_kwargs
+    )
     return engine
 
 
@@ -74,7 +76,6 @@ def reset_database(engine: Engine):
     meta = MetaData()
     meta.reflect(bind=engine)
     meta.drop_all(bind=engine)
-    print("All tables dropped!")
 
 
 def populate_database(
@@ -90,5 +91,4 @@ def populate_database(
     else:
         engine = initialize_default_database()
     execute_queries(engine, table_order, tables)
-    # Push data in db
     engine.dispose()
