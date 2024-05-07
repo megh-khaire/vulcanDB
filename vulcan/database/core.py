@@ -5,6 +5,8 @@ from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
 
+from vulcan.database.load import push_data_in_db
+
 
 def initialize_default_database(db_file: str = "default.db") -> Engine:
     """
@@ -91,4 +93,5 @@ def populate_database(
     else:
         engine = initialize_default_database()
     execute_queries(engine, table_order, tables)
+    push_data_in_db(engine, dataframe, table_order)
     engine.dispose()
