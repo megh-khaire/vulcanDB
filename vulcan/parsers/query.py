@@ -27,14 +27,29 @@ def extract_column_names_from_parsed_query(parsed_query):
     return columns
 
 
-def extract_foreign_keys_from_parsed_query(parsed_query):
+def extract_references_from_columns(parsed_query):
+    foreign_tables = []
+    parsed_columns = extract_columns_from_parsed_query(parsed_query)
+    for column in parsed_columns:
+        if "references" in column:
+            foreign_tables.append(column["references"]["table"])
+    return foreign_tables
+
+
+def extract_references_from_table(parsed_query):
     table_constraints = extract_table_constraints_from_parsed_query(parsed_query)
-    foreign_keys = []
+    foreign_tables = []
     for constraint in table_constraints:
         if "foreign_key" in constraint:
             fk_table = constraint["foreign_key"]["references"]
-            foreign_keys.append(fk_table["table"])
-    return foreign_keys
+            foreign_tables.append(fk_table["table"])
+    return foreign_tables
+
+
+def extract_foreign_keys_from_parsed_query(parsed_query):
+    column_references = extract_references_from_columns(parsed_query)
+    table_references = extract_references_from_table(parsed_query)
+    return list(set(column_references + table_references))
 
 
 def parse_sql_query(query: str):
