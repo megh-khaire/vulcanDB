@@ -3,3 +3,7 @@ check,foreign_key,primary_key,default,not_null,unique,dataset,execution_time,tot
 0,16,0,1,0,15,DelayedFlights.csv,93.09787392616272,32,1,30,False
 0,14,0,0,21,1,DelayedFlights.csv (masked),110.42978310585022,36,1,30,False
 0,0,0,21,15,1,DelayedFlights.csv (masked),90.80409216880798,37,1,30,False
+4,0,0,0,0,0,sample.csv csvkit,0.25687408447265625,4,1,0,False
+0,4,0,0,0,0,sample.csv csvkit,0.2668459415435791,4,1,0,False
+0,0,0,0,0,4,sample.csv csvkit,0.21379709243774414,4,1,0,False
+0,0,0,4,0,0,sample.csv csvkit,0.2638862133026123,4,1,0,False
