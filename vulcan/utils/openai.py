@@ -9,9 +9,11 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 
-def openai_chat_api(messages, **kwargs):
+def openai_chat_api(messages, *, model="gpt-4o", temperature=0, seed=42):
     client = OpenAI(api_key=OPENAI_API_KEY)
-    response = client.chat.completions.create(messages=messages, **kwargs)
+    response = client.chat.completions.create(
+        messages=messages, model=model, temperature=temperature, seed=seed
+    )
     return response.choices[0].message.content
 
 
@@ -51,7 +53,8 @@ Output Schema:
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
-    data["schema"] = openai_chat_api(messages, model="gpt-4-turbo", temperature=0)
+    data["schema"] = openai_chat_api(messages)
+    print(">> GENERATED SCHEMA ", data["schema"])
     return data
 
 
@@ -89,9 +92,8 @@ Constrained Schema:
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
-    data["constrained_schema"] = openai_chat_api(
-        messages, model="gpt-4-turbo", temperature=0
-    )
+    data["constrained_schema"] = openai_chat_api(messages)
+    print(">> GENERATED CONSTRAINTS ", data["constrained_schema"])
     return data
 
 
@@ -158,7 +160,7 @@ SQL Queries for {data["database"]}:
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
-    queries = openai_chat_api(messages, model="gpt-4-turbo", temperature=0)
+    queries = openai_chat_api(messages)
     data["queries"] = format_sql_queries(queries)
     print(">> GENERATED QUERIES ", data["queries"])
     return data
